@@ -41,7 +41,7 @@ public class Load extends Application{
     final double dyx=scan.nextDouble()*(-1);
 
     System.out.println("Mode?");
-    System.out.print("1[Random] or 0[Normal] or 2[Methodical] >>");
+    System.out.print("1[Random] or 2[Normal] or 0[Methodical] >>");
     final int rand=scan.nextInt();
 
     new AnimationTimer(){
@@ -51,6 +51,7 @@ public class Load extends Application{
       public double s=sx;
       public boolean dark=false;
       public boolean light=false;
+      public int fail=10;
 
       public void handle(long currentNanoTime){
         if(i<width){
@@ -58,7 +59,7 @@ public class Load extends Application{
           for(int j=0;j<height;j++){
             Point p=new Point(i,j,s,dx,dy);
             int c=p.getValue();
-            gc.setFill(Color.rgb(c,c,c));
+            gc.setFill(Color.rgb(c%256,c%256,c%256));
             if(c>100){
               light=true;
             }else if(c<100){
@@ -66,9 +67,11 @@ public class Load extends Application{
             }
             gc.fillOval(i,j,1,1);
           }
-        }else if(rand !=0){
+        }else if(rand !=2){
+          boolean boop=false;
           if(dark&&light){
             System.out.println("SEE ME!");
+            boop=true;
           }
           dark=false;
           light=false;
@@ -81,23 +84,36 @@ public class Load extends Application{
           }
           i=0;
           if(rand==1){
-            dy=Math.random()*2-1;
-            dx=Math.random()*2-1;
-            s=Math.random()*20000;
-          }else if(rand==2){
-            dy+=height/s;
-            if(dy>2){
-              dx+=width/s;
-              dy=-2;
-              if(dx>2){
-                dy=-2;
-                dx=-2;
-                s=s*2;
+            dy=Math.random()*4-2;
+            dx=Math.random()*4-2;
+            s=Math.random()*10000;
+          }else if(rand==0){
+            if(boop){
+              s=s*2;
+              fail=0;
+            }else{
+              fail++;
+              dy+=height/s;
+              if(dy>1){
+                dx+=width/s;
+                dy=-1;
+                if(dx>1){
+                  dy=-1;
+                  dx=-1;
+                  s=s*2;
+                }
+              }
+
+              if(fail>10||s>=1.0E+12){
+                dy=Math.random()*4-2;
+                dx=Math.random()*4-2;
+                s=Math.random()*10000;
               }
             }
+
           }
 
-          System.out.println("Scale ="+s+" dx="+dx+" dy="+dy);
+          System.out.println("Scale ="+s+" dx="+dx+" dy=-"+dy);
         }
 
 
